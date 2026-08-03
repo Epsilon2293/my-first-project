@@ -15,21 +15,7 @@ export const AiTutorChat: React.FC<AiTutorChatProps> = ({ subjects }) => {
       userQ: string;
       aiResponse: { explanation: string; example: string; practiceQuestion: string; answerKey: string };
     }[]
-  >([
-    {
-      userQ: '我不懂牛頓第二運動定律',
-      aiResponse: {
-        explanation:
-          '牛頓第二運動定律 (F = ma) 說明「物體受到的淨外力 F，會使物體產生與外力同方向的加速度 a」。質量 m 越大，越難改變其運動狀態（慣性大）。以打棒球比喻：用相同的力氣揮棒，打羽球 (質量小) 比打保齡球 (質量大) 能飛得快得多。',
-        example:
-          '【範例題】質量為 4 kg 的物體在水平光滑無摩擦面上，受到 20 N 向東的水平推力，求物體的加速度？\n解：根據 F = ma，20 = 4 × a ➔ a = 5 m/s² (向東)。',
-        practiceQuestion:
-          '【隨堂練】若改在有摩擦力的地面上推動同一個 4 kg 物體，動摩擦力為 4 N，若依然施加 20 N 向東的推力，此時物體的加速度為多少？',
-        answerKey:
-          '【解答解析】合力 ΣF = 20 (推力) - 4 (摩擦力) = 16 N (向東)。\n由 F = ma ➔ 16 = 4 × a ➔ a = 4 m/s² (向東)。'
-      }
-    }
-  ]);
+  >([]);
 
   const handleSendQuestion = async () => {
     if (!question.trim()) return;
@@ -78,53 +64,65 @@ export const AiTutorChat: React.FC<AiTutorChatProps> = ({ subjects }) => {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#f4f6fb] dark:bg-slate-950">
-        {chatHistory.map((item, index) => (
-          <div key={index} className="space-y-4">
-            <div className="flex justify-end">
-              <div className="bg-slate-950 dark:bg-indigo-600 text-white font-semibold p-4 rounded-2xl rounded-tr-none max-w-lg text-xs shadow-sm">
-                {item.userQ}
-              </div>
+        {chatHistory.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-center p-8 text-slate-400 space-y-3">
+            <div className="w-12 h-12 rounded-full bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+              <Bot className="w-6 h-6" />
             </div>
-
-            <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 rounded-full bg-amber-300 text-slate-950 flex items-center justify-center font-black shrink-0 mt-1">
-                <Sparkles className="w-4 h-4 fill-slate-950" />
-              </div>
-              <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 rounded-2xl rounded-tl-none max-w-2xl space-y-4 text-xs text-slate-800 dark:text-slate-200 shadow-sm">
-                
-                <div className="space-y-1">
-                  <span className="font-black text-slate-950 dark:text-white flex items-center space-x-1 text-sm">
-                    <BookOpen className="w-4 h-4" />
-                    <span>核心觀念說明</span>
-                  </span>
-                  <p className="leading-relaxed text-slate-700 dark:text-slate-300 font-semibold">{item.aiResponse.explanation}</p>
-                </div>
-
-                <div className="bg-[#f4f6fb] dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 font-mono text-slate-950 dark:text-amber-300 whitespace-pre-line font-bold">
-                  {item.aiResponse.example}
-                </div>
-
-                <div className="bg-amber-50 dark:bg-amber-400/10 p-4 rounded-xl border border-amber-200 dark:border-amber-400/20 space-y-2">
-                  <span className="font-black text-amber-900 dark:text-amber-300 flex items-center space-x-1">
-                    <HelpCircle className="w-4 h-4" />
-                    <span>隨堂自我小測驗</span>
-                  </span>
-                  <p className="text-amber-950 dark:text-slate-100 font-bold">{item.aiResponse.practiceQuestion}</p>
-
-                  <details className="mt-2 text-slate-600 dark:text-slate-400 cursor-pointer">
-                    <summary className="font-extrabold hover:text-slate-950 dark:hover:text-white transition">
-                      👉 點擊解開標準答案與解析
-                    </summary>
-                    <p className="mt-2 text-emerald-800 dark:text-emerald-400 font-bold whitespace-pre-line font-mono bg-white dark:bg-slate-950 p-3 rounded-lg border border-slate-200 dark:border-slate-800">
-                      {item.aiResponse.answerKey}
-                    </p>
-                  </details>
-                </div>
-
-              </div>
-            </div>
+            <h3 className="font-extrabold text-slate-950 dark:text-white text-base">歡迎使用 AI 專屬問答助教</h3>
+            <p className="text-xs max-w-sm leading-relaxed text-slate-500 dark:text-slate-400 font-medium">
+              選擇科目並輸入您遇到的任何難題，AI 導師將為您拆解觀念、提供示範範例與隨堂小測驗！
+            </p>
           </div>
-        ))}
+        ) : (
+          chatHistory.map((item, index) => (
+            <div key={index} className="space-y-4">
+              <div className="flex justify-end">
+                <div className="bg-slate-950 dark:bg-indigo-600 text-white font-semibold p-4 rounded-2xl rounded-tr-none max-w-lg text-xs shadow-sm">
+                  {item.userQ}
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-3">
+                <div className="w-8 h-8 rounded-full bg-amber-300 text-slate-950 flex items-center justify-center font-black shrink-0 mt-1">
+                  <Sparkles className="w-4 h-4 fill-slate-950" />
+                </div>
+                <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 rounded-2xl rounded-tl-none max-w-2xl space-y-4 text-xs text-slate-800 dark:text-slate-200 shadow-sm">
+                  
+                  <div className="space-y-1">
+                    <span className="font-black text-slate-950 dark:text-white flex items-center space-x-1 text-sm">
+                      <BookOpen className="w-4 h-4" />
+                      <span>核心觀念說明</span>
+                    </span>
+                    <p className="leading-relaxed text-slate-700 dark:text-slate-300 font-semibold">{item.aiResponse.explanation}</p>
+                  </div>
+
+                  <div className="bg-[#f4f6fb] dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 font-mono text-slate-950 dark:text-amber-300 whitespace-pre-line font-bold">
+                    {item.aiResponse.example}
+                  </div>
+
+                  <div className="bg-amber-50 dark:bg-amber-400/10 p-4 rounded-xl border border-amber-200 dark:border-amber-400/20 space-y-2">
+                    <span className="font-black text-amber-900 dark:text-amber-300 flex items-center space-x-1">
+                      <HelpCircle className="w-4 h-4" />
+                      <span>隨堂自我小測驗</span>
+                    </span>
+                    <p className="text-amber-950 dark:text-slate-100 font-bold">{item.aiResponse.practiceQuestion}</p>
+
+                    <details className="mt-2 text-slate-600 dark:text-slate-400 cursor-pointer">
+                      <summary className="font-extrabold hover:text-slate-950 dark:hover:text-white transition">
+                        👉 點擊解開標準答案與解析
+                      </summary>
+                      <p className="mt-2 text-emerald-800 dark:text-emerald-400 font-bold whitespace-pre-line font-mono bg-white dark:bg-slate-950 p-3 rounded-lg border border-slate-200 dark:border-slate-800">
+                        {item.aiResponse.answerKey}
+                      </p>
+                    </details>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          ))
+        )}
 
         {isLoading && (
           <div className="flex items-center space-x-3">
