@@ -137,20 +137,26 @@ export const PortfolioLogger: React.FC = () => {
       {/* History */}
       <div className="space-y-3">
         <h3 className="font-extrabold text-slate-950 dark:text-white text-sm px-2">歷史學習紀錄</h3>
-        {logs.map((log) => (
-          <div key={log.id} className="bg-white dark:bg-slate-900 border border-slate-900/10 dark:border-slate-800 p-5 rounded-2xl space-y-2 shadow-sm transition-colors duration-300">
-            <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
-              <span className="font-mono text-slate-950 dark:text-white">{log.date}</span>
-              <span>完成 {log.exercisesCompleted} 題練習</span>
-            </div>
-            <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">{log.reflection}</p>
-            {log.blockers && (
-              <p className="text-[11px] font-bold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-400/10 p-2.5 rounded-xl border border-amber-200 dark:border-amber-400/20">
-                ⚠️ 遇到的卡關：{log.blockers}
-              </p>
-            )}
+        {logs.length === 0 ? (
+          <div className="text-center py-10 bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-900/10 dark:border-slate-800 text-slate-400 font-bold text-xs">
+            目前尚無學習日誌，請在上方新增您的第一筆讀書心得！
           </div>
-        ))}
+        ) : (
+          logs.map((log) => (
+            <div key={log.id} className="bg-white dark:bg-slate-900 border border-slate-900/10 dark:border-slate-800 p-5 rounded-2xl space-y-2 shadow-sm transition-colors duration-300">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
+                <span className="font-mono text-slate-950 dark:text-white">{log.date}</span>
+                <span>完成 {log.exercisesCompleted} 題練習</span>
+              </div>
+              <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">{log.reflection}</p>
+              {log.blockers && (
+                <p className="text-[11px] font-bold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-400/10 p-2.5 rounded-xl border border-amber-200 dark:border-amber-400/20">
+                  ⚠️ 遇到的卡關：{log.blockers}
+                </p>
+              )}
+            </div>
+          ))
+        )}
       </div>
 
     </div>
