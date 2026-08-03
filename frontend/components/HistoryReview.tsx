@@ -13,7 +13,7 @@ export const HistoryReview: React.FC<HistoryReviewProps> = ({
   historyRecords = MOCK_HISTORY_RECORDS
 }) => {
   const [records, setRecords] = useState<HistoryDayRecord[]>(historyRecords);
-  const [selectedDate, setSelectedSubjectDate] = useState<string>(records[0]?.date || '2024-11-28');
+  const [selectedDate, setSelectedSubjectDate] = useState<string>(records[0]?.date || '');
   const [isGeneratingAiReview, setIsGeneratingAiReview] = useState(false);
 
   const activeRecord = records.find((r) => r.date === selectedDate) || records[0];
@@ -35,10 +35,10 @@ export const HistoryReview: React.FC<HistoryReviewProps> = ({
     setIsGeneratingAiReview(false);
   };
 
-  const completedCount = activeRecord.tasksCompleted.filter((t) => t.completed).length;
-  const taskCompletionRate = activeRecord.tasksCompleted.length > 0
+  const completedCount = activeRecord?.tasksCompleted.filter((t) => t.completed).length || 0;
+  const taskCompletionRate = activeRecord && activeRecord.tasksCompleted.length > 0
     ? Math.round((completedCount / activeRecord.tasksCompleted.length) * 100)
-    : 100;
+    : 0;
 
   return (
     <div className="space-y-6">
@@ -67,31 +67,43 @@ export const HistoryReview: React.FC<HistoryReviewProps> = ({
           </div>
 
           {/* Timeline Date Selector Pills */}
-          <div className="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none pt-2 border-t border-slate-100 dark:border-slate-800">
-            {records.map((rec) => {
-              const isSelected = rec.date === selectedDate;
-              return (
-                <button
-                  key={rec.date}
-                  onClick={() => setSelectedSubjectDate(rec.date)}
-                  className={`flex items-center space-x-2 px-5 py-2.5 rounded-full text-xs font-black transition transform active:scale-95 whitespace-nowrap ${
-                    isSelected
-                      ? 'bg-slate-950 dark:bg-indigo-600 text-white shadow-md'
-                      : 'bg-[#f4f6fb] dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
-                  }`}
-                >
-                  <span className="font-mono">{rec.date}</span>
-                  <span>{rec.mood}</span>
-                </button>
-              );
-            })}
-          </div>
+          {records.length > 0 && (
+            <div className="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none pt-2 border-t border-slate-100 dark:border-slate-800">
+              {records.map((rec) => {
+                const isSelected = rec.date === selectedDate;
+                return (
+                  <button
+                    key={rec.date}
+                    onClick={() => setSelectedSubjectDate(rec.date)}
+                    className={`flex items-center space-x-2 px-5 py-2.5 rounded-full text-xs font-black transition transform active:scale-95 whitespace-nowrap ${
+                      isSelected
+                        ? 'bg-slate-950 dark:bg-indigo-600 text-white shadow-md'
+                        : 'bg-[#f4f6fb] dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
+                    }`}
+                  >
+                    <span className="font-mono">{rec.date}</span>
+                    <span>{rec.mood}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
         </div>
       </GlowCard>
 
       {/* Selected Historical Day Bento Grid */}
-      {activeRecord && (
+      {records.length === 0 ? (
+        <GlowCard className="rounded-[2.5rem]">
+          <div className="bg-white dark:bg-slate-900 border border-slate-900/10 dark:border-slate-800 rounded-[2.5rem] p-12 text-center space-y-3">
+            <History className="w-10 h-10 text-slate-400 mx-auto" />
+            <h3 className="font-extrabold text-slate-950 dark:text-white text-base">目前尚無歷史復盤紀錄</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+              當您在「智慧讀書計畫」完成今日任務或在「學習歷程紀錄」進行打卡後，AI 將自動為您歸檔並提供診斷復盤！
+            </p>
+          </div>
+        </GlowCard>
+      ) : activeRecord ? (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
           {/* Left Column: Key Stats & AI Review */}
@@ -234,7 +246,7 @@ export const HistoryReview: React.FC<HistoryReviewProps> = ({
           </div>
 
         </div>
-      )}
+      ) : null}
 
     </div>
   );
