@@ -11,7 +11,7 @@ import {
   Bar,
   Legend
 } from 'recharts';
-import { TrendingUp, Clock, Smile, Activity, Plus, X, Trash2 } from 'lucide-react';
+import { TrendingUp, Clock, Smile, Activity, Plus, X, Trash2, Award } from 'lucide-react';
 import { ScoreRecord } from '../types';
 import { GlowCard } from './GlowCard';
 
@@ -24,7 +24,7 @@ interface DashboardProps {
 export const Dashboard: React.FC<DashboardProps> = ({ scores, setScores, subjects }) => {
   // Modal for Custom Test Scores Input
   const [isAddScoreModalOpen, setIsAddScoreModalOpen] = useState(false);
-  const [examName, setExamName] = useState('第四次全區模考');
+  const [examName, setExamName] = useState('第一次全區模考');
   const [examDate, setExamDate] = useState('12/15');
   
   // Dynamic scores map state
@@ -143,24 +143,31 @@ export const Dashboard: React.FC<DashboardProps> = ({ scores, setScores, subject
             </div>
 
             <div className="h-64 pt-2">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                  <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} />
-                  <YAxis domain={[50, 100]} stroke="#94a3b8" fontSize={11} />
-                  <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderRadius: '1rem', color: '#fff', border: '1px solid #334155' }} />
-                  <Legend />
-                  {subjects.map((sub, idx) => (
-                    <Line
-                      key={sub}
-                      type="monotone"
-                      dataKey={sub}
-                      stroke={LINE_COLORS[idx % LINE_COLORS.length]}
-                      strokeWidth={2}
-                    />
-                  ))}
-                </LineChart>
-              </ResponsiveContainer>
+              {scores.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-center text-slate-400 font-bold text-xs">
+                  <Award className="w-8 h-8 opacity-40 mb-2" />
+                  <span>尚無測驗分數紀錄，請點擊右上角【自訂測驗成績】</span>
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                    <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} />
+                    <YAxis domain={[50, 100]} stroke="#94a3b8" fontSize={11} />
+                    <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderRadius: '1rem', color: '#fff', border: '1px solid #334155' }} />
+                    <Legend />
+                    {subjects.map((sub, idx) => (
+                      <Line
+                        key={sub}
+                        type="monotone"
+                        dataKey={sub}
+                        stroke={LINE_COLORS[idx % LINE_COLORS.length]}
+                        strokeWidth={2}
+                      />
+                    ))}
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
             </div>
           </div>
         </GlowCard>
@@ -201,29 +208,35 @@ export const Dashboard: React.FC<DashboardProps> = ({ scores, setScores, subject
         <div className="bg-white dark:bg-slate-900 border border-slate-900/10 dark:border-slate-800 rounded-[2.5rem] p-8 shadow-sm space-y-4">
           <h3 className="font-extrabold text-slate-950 dark:text-white text-base">測驗歷史明細與分數表</h3>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            {scores.map((rec) => (
-              <div key={rec.id} className="bg-[#f4f6fb] dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2 relative group">
-                <button
-                  onClick={() => handleDeleteScore(rec.id)}
-                  className="absolute top-3 right-3 text-slate-400 hover:text-rose-500 transition"
-                  title="刪除測驗"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-                <span className="text-[11px] font-black text-indigo-600 dark:text-indigo-400 font-mono block">{rec.date}</span>
-                <h4 className="font-black text-slate-950 dark:text-white text-sm">{rec.examName}</h4>
-                <div className="grid grid-cols-2 gap-1.5 pt-1 text-[11px] font-extrabold">
-                  {Object.entries(rec.scores).map(([sub, score]) => (
-                    <div key={sub} className="bg-white dark:bg-slate-900 p-1.5 rounded-lg text-center border border-slate-200 dark:border-slate-800">
-                      <span className="text-slate-400 block text-[10px] truncate">{sub}</span>
-                      <span className="text-slate-950 dark:text-white font-black">{score} 分</span>
-                    </div>
-                  ))}
+          {scores.length === 0 ? (
+            <div className="text-center py-10 bg-[#f4f6fb] dark:bg-slate-950 rounded-2xl text-slate-400 font-bold text-xs">
+              目前尚無測驗紀錄，請點擊上方【自訂測驗成績】新增您的第一筆考試分數！
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              {scores.map((rec) => (
+                <div key={rec.id} className="bg-[#f4f6fb] dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2 relative group">
+                  <button
+                    onClick={() => handleDeleteScore(rec.id)}
+                    className="absolute top-3 right-3 text-slate-400 hover:text-rose-500 transition"
+                    title="刪除測驗"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                  <span className="text-[11px] font-black text-indigo-600 dark:text-indigo-400 font-mono block">{rec.date}</span>
+                  <h4 className="font-black text-slate-950 dark:text-white text-sm">{rec.examName}</h4>
+                  <div className="grid grid-cols-2 gap-1.5 pt-1 text-[11px] font-extrabold">
+                    {Object.entries(rec.scores).map(([sub, score]) => (
+                      <div key={sub} className="bg-white dark:bg-slate-900 p-1.5 rounded-lg text-center border border-slate-200 dark:border-slate-800">
+                        <span className="text-slate-400 block text-[10px] truncate">{sub}</span>
+                        <span className="text-slate-950 dark:text-white font-black">{score} 分</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </GlowCard>
 
@@ -256,7 +269,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ scores, setScores, subject
                     type="text"
                     value={examName}
                     onChange={(e) => setExamName(e.target.value)}
-                    placeholder="如: 第四次模考"
+                    placeholder="如: 第一次全區模考"
                     required
                     className="w-full bg-[#f4f6fb] dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 font-extrabold text-slate-950 dark:text-white focus:outline-none"
                   />
